@@ -279,15 +279,33 @@ class WeDevs_WC_Tracking_Integration extends WC_Integration {
             return $code;
         }
 
-        $order_currency = $order->get_order_currency();
-        $order_total    = $order->get_total();
-        $order_number   = $order->get_order_number();
-        $order_subtotal = $order->get_subtotal();
+	$coupons = $order->get_used_coupons();
+	$coupon_code = ($coupons) ? $coupons[0] : '';
 
-        $code           = str_replace( '{currency}', $order_currency, $code );
-        $code           = str_replace( '{order_total}', $order_total, $code );
-        $code           = str_replace( '{order_number}', $order_number, $code );
-        $code           = str_replace( '{order_subtotal}', $order_subtotal, $code );
+	$fields = array( 
+        	'{currency}', 
+        	'{order_total}', 
+        	'{order_number}', 
+        	'{order_subtotal}', 
+		'{customer_firstname}', 
+		'{customer_lastname}', 
+		'{customer_email}', 
+		'{coupon_used}',
+		);
+
+	$values = array(
+        	$order->get_order_currency(),
+        	$order->get_total(),
+        	$order->get_order_number(),
+        	$order->get_subtotal(),
+  		$order->get_billing_first_name(),
+    		$order->get_billing_last_name(),
+      		$order->get_billing_email(),
+		$coupon_code,
+	);
+
+
+	$code           = str_replace( $fields, $values, $code);
 
         return $code;
     }
